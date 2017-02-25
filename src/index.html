@@ -35,6 +35,8 @@
     let topLeftRect = new Point(10, 10, 80);
     let rect = new Rectangle(topLeftRect, 170, 130);
     scene.addPolygon(rect);
+    scene.addPoint(Centroid.getCentroid( rect ));
+
 
     let polygon = new GeneralPolygon();
     for (i = 0; i < 6; ++i) {
@@ -42,6 +44,7 @@
       polygon.addPoint(gpp);
     }
     scene.addPolygon(polygon);
+    scene.addPoint(Centroid.getCentroid( polygon ));
 
 
     let polygon2 = new GeneralPolygon();
@@ -50,6 +53,9 @@
       polygon2.addPoint(gpp);
     }
     scene.addPolygon(polygon2);
+
+    scene.addPoint(Centroid.getCentroid( polygon2 ));
+
 
     let camera = new Camera();
     scene.setActiveCamera(camera);
