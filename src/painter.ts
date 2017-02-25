@@ -59,11 +59,14 @@ export class Painter {
         return new Segment( Painter.to2dPoint(s.p1, plane, up), Painter.to2dPoint(s.p2, plane, up));
     }
 
-    static paintPolygon( polygon: Polygon, element: SVGElement, angle: number ) {
-        let origin = new Point(0,0,0);
-        let n = Vector.norm( new Vector( Math.cos( angle *  Math.PI / 180 ) ,0, Math.sin(  angle * Math.PI / 180 ) ));
-        let plane = new Plane( origin, n );
-        let up = new Vector( 0, 1, 0);
+    static paintPolygon( scene: Scene, polygon: Polygon, element: SVGElement) {
+
+        let camera = scene.getActiveCamera();
+        let origin =  camera.lookPoint;
+        let n = camera.lookEyeVector;
+        let plane = camera.plane;
+        let up = camera.upVector;
+
         polygon.getPoints().map( p => Project.pointToPlane(p, plane) )
             .map (p => Painter.to2dPoint(p, plane, up ) )
             .map( p => element.appendChild( Painter.addCircle(p.x,p.y)));
@@ -86,12 +89,13 @@ export class Painter {
         }
     }
 
-    static paint(scene: Scene, element: SVGElement, angle: number): void {
-        let origin = new Point(0,0,0);
-        let n = Vector.norm( new Vector( Math.cos( angle *  Math.PI / 180 ) ,0, Math.sin(  angle * Math.PI / 180 ) ));
-        let plane = new Plane( origin, n );
-        let up = new Vector( 0, 1, 0);
-
+    static paint(scene: Scene, element: SVGElement): void {
+        let camera = scene.getActiveCamera();
+        let origin =  camera.lookPoint;
+        let n = camera.lookEyeVector;
+        let plane = camera.plane;
+        let up = camera.upVector;
+        
         scene.points
                 .map( p => Project.pointToPlane(p, plane) )
                 .map (p => Painter.to2dPoint(p, plane, up ) )
@@ -102,7 +106,7 @@ export class Painter {
         .map (s => Painter.to2dSegment(s, plane, up ) )
         .map(s => element.appendChild(Painter.addLine( s.p1.x, s.p1.y, s.p2.x, s.p2.y )) );
 
-        scene.polygons.forEach( (polygon) => Painter.paintPolygon( polygon, element, angle ) );
+        scene.polygons.forEach( (polygon) => Painter.paintPolygon(scene, polygon, element ) );
     }
 
     static createScene(): Scene {

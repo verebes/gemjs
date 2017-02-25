@@ -3,6 +3,7 @@ import {Segment} from './segment';
 import {Rectangle} from './rectangle';
 import {Project} from './projection';
 import {GeneralPolygon} from './polygon';
+import {Camera} from './camera';
 
 interface Facade {
     Point: typeof Point;
@@ -10,6 +11,7 @@ interface Facade {
     Rectangle: typeof Rectangle;
     Project: typeof Project;
     GeneralPolygon: typeof GeneralPolygon;
+    Camera: typeof Camera;
 }
 
 function InitGem( parent: any ) {
@@ -21,7 +23,8 @@ function InitGem( parent: any ) {
        Segment: Segment,
        Rectangle: Rectangle,
        Project: Project,
-       GeneralPolygon: GeneralPolygon
+       GeneralPolygon: GeneralPolygon,
+       Camera: Camera
     });
 }
 
