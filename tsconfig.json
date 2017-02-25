@@ -1,0 +1,30 @@
+{
+    "files": [
+        "src/facade.ts",
+        "src/vector.ts",
+        "src/point.ts",
+        "src/segment.ts",
+        "src/painter.ts",
+        "src/scene.ts",
+        "src/camera.ts",
+        "test/point.test.ts"
+    ],
+    "compilerOptions": {
+        "target": "es5",
+        "lib": ["dom", "es6"],
+        "typeRoots": [
+            "./node_modules/@types"
+        ],
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "outDir": "./dist"
+    },
+    "exclude": [
+        "node_modules",
+        "wwwroot",
+        "artifacts",
+        ".git",
+        ".vs",
+        "dist"
+    ]
+}

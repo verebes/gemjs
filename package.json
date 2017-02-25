@@ -1,0 +1,55 @@
+{
+  "name": "gemjs",
+  "version": "1.0.0",
+  "description": "Geometry library for javascript",
+  "main": "dist/gemjs.js",
+  "scripts": {
+    "test": "karma start",
+    "mocha": "mocha ./test/point.test.ts --require ts-node/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/verebes/gemjs.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/verebes/gemjs/issues"
+  },
+  "homepage": "https://github.com/verebes/gemjs#readme",
+  "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.35",
+    "babel-preset-es2015": "^6.18.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
+    "chai": "^3.5.0",
+    "exorcist": "^0.4.0",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-mocha": "^3.0.1",
+    "gulp-sourcemaps": "^1.9.1",
+    "gulp-typescript": "^3.1.3",
+    "gulp-uglify": "^2.0.0",
+    "karma": "^1.3.0",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.1",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-sinon": "^1.0.5",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-typescript": "^2.1.5",
+    "mocha": "^3.2.0",
+    "mocha-typescript": "^1.0.15",
+    "phantomjs": "^2.1.7",
+    "phantomjs-prebuilt": "^2.1.14",
+    "sinon": "^1.17.6",
+    "ts-loader": "^1.3.3",
+    "ts-node": "^1.7.2",
+    "tsify": "^2.0.7",
+    "typescript": "^2.1.4",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

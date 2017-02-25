@@ -1,0 +1,17 @@
+{
+  "name": "gemjs",
+  "description": "Geometry library for javascript",
+  "main": "dist/gemjs.js",
+  "authors": [
+    "Gabor Verebes <verebes@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/verebes/gemjs",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
