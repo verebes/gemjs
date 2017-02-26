@@ -12,7 +12,7 @@ export class Camera {
     constructor(
     ) {
         this._look = new Point(0, 0, 0);
-        this._eye = new Point(0, 0, 1);
+        this._eye = new Point(0, 0, 500);
         this._up = new Vector(0, 1, 0);
         this._width = 1000;
         this._height = 1000;
@@ -63,7 +63,7 @@ export class Camera {
     }
 
     get plane(): Plane {
-        let lookEye = this.lookEyeVector;
+        let lookEye = Vector.norm( this.lookEyeVector );
         let plane = new Plane(this._look, lookEye);
 
         return plane;

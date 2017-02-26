@@ -1,5 +1,5 @@
 import {Scene} from './scene';
-import {Polygon} from './polygon';
+import {Polygon, Centroid} from './polygon';
 import {Point} from './point';
 import {Segment} from './segment';
 import {Project} from './projection';
@@ -104,9 +104,19 @@ export class Painter {
         scene.segments
         .map( s => Project.segmentToPlane(s, plane) )
         .map (s => Painter.to2dSegment(s, plane, up ) )
-        .map(s => element.appendChild(Painter.addLine( s.p1.x, s.p1.y, s.p2.x, s.p2.y )) );
+        .map( s => element.appendChild(Painter.addLine( s.p1.x, s.p1.y, s.p2.x, s.p2.y )) );
 
-        scene.polygons.forEach( (polygon) => Painter.paintPolygon(scene, polygon, element ) );
+        let distances = scene.polygons.map( Centroid.getCentroid ).map( p => Vector.dot( p.toVector(), Vector.norm( camera.plane.normal )));
+        console.log( 'distance:' + JSON.stringify( distances ) );
+        
+        let idx = Array<number>( distances.length );
+        for ( let i = 0 ; i < distances.length ; ++i ){
+            idx[i] = i;
+        }
+        idx = idx.sort( (i,j) => distances[j] - distances[i] );
+        console.log( 'idx: ' + JSON.stringify( idx ));
+
+        idx.forEach( (idx) => Painter.paintPolygon(scene, scene.polygons[idx], element ) );
     }
 
     static createScene(): Scene {
