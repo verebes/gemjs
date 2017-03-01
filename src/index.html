@@ -14,7 +14,7 @@
       let y = Math.sin(i * 2 * Math.PI / 12);
       let x = Math.cos(i * 2 * Math.PI / 12);
       let point = new Point(100 + 40 * x, 100 + 40 * y, -30);
-      scene.addPoint(point);
+//      scene.addPoint(point);
     }
 
     let p1 = new Point(0, 0, 40);
@@ -34,8 +34,8 @@
 
     let topLeftRect = new Point(10, 10, 80);
     let rect = new Rectangle(topLeftRect, 170, 130);
-    scene.addPolygon(rect);
-    scene.addPoint(Centroid.getCentroid( rect ));
+   scene.addPolygon(rect);
+   scene.addPoint(Centroid.getCentroid( rect ));
 
 
     let polygon = new GeneralPolygon();
@@ -43,8 +43,8 @@
       let gpp = new Point(50 + 150 * Math.cos(i * 60 * (Math.PI / 180)), 50 + 150 * Math.sin(i * 60 * (Math.PI / 180)), 0);
       polygon.addPoint(gpp);
     }
-    scene.addPolygon(polygon);
-    scene.addPoint(Centroid.getCentroid( polygon ));
+   scene.addPolygon(polygon);
+   scene.addPoint(Centroid.getCentroid( polygon ));
 
 
     let polygon2 = new GeneralPolygon();
@@ -52,10 +52,25 @@
       let gpp = new Point(100, 150 + 25 * Math.cos(i * 45 * (Math.PI / 180)), 150 + 25 * Math.sin(i * 45 * (Math.PI / 180)));
       polygon2.addPoint(gpp);
     }
-    scene.addPolygon(polygon2);
+   scene.addPolygon(polygon2);
+   scene.addPoint(Centroid.getCentroid( polygon2 ));
 
-    scene.addPoint(Centroid.getCentroid( polygon2 ));
+    let cube = new Cube( new Point(30,0,120), 90 );
+    scene.addShape(cube);
+    let cubeDirection = Vector.norm( new Vector(1,0,1));
+    let cube2 = new Cube( new Point(30,100,120), 90, cubeDirection );
+    scene.addShape(cube2);
 
+    // let c = new Cube({
+    //   points: [p0,p1,p2,p3,p4,p5,p6,p7]
+    // });
+
+    // let c2 = new Cube({
+    //   point: p0,
+    //   width: 100,
+    //   normal: new Vector(1,0,1),
+    //   up: new Vector(0,1,0)
+    // });
 
     let camera = new Camera();
     scene.setActiveCamera(camera);
