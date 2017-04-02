@@ -3,7 +3,7 @@ import * as chai from 'chai';
 import { GeneralPolygon } from '../src/polygon';
 import { Point } from '../src/point';
 
-describe.only('General polygons are set of vertices and edges connecting the vertices', () => {
+describe('General polygons are set of vertices and edges connecting the vertices', () => {
     it('should create a general polygon with three points', () => {
         let polygon = new GeneralPolygon();
         polygon.addPoint( new Point(0,0,0 ));
