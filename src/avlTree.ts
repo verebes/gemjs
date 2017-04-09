@@ -42,21 +42,21 @@ export class AvlTree<T> implements IAvlTree<T> {
         this.root = this.root.insert(t);
     }
     delete(t: T): void {
-        if ( !this.root.value ) {
+        if (!this.root.value) {
             return;
         }
 
-        if ( this.root.value === t ) {
-            if ( this.root.right ) {
+        if (this.root.value === t) {
+            if (this.root.right) {
                 this.root = this.root.right;
-            } else if ( this.root.left ) {
+            } else if (this.root.left) {
                 this.root = this.root.left;
             } else {
                 this.root = new AvlNode<T>();
             }
             return;
         }
-        this.root.delete(t);
+        this.root = this.root.delete(t);
         this.root.height = this.root.getMaxChildHeight() + 1;
     }
     minValue(): T {
@@ -122,6 +122,10 @@ class AvlNode<T> implements IAvlTree<T>  {
 
         this.height = this.getMaxChildHeight() + 1;
 
+        return this.rebalance(t);
+    }
+
+    private rebalance(t: T) {
         let newRoot: AvlNode<T> = this;
         let balance: number = this.left.height - this.right.height;
 
@@ -141,14 +145,14 @@ class AvlNode<T> implements IAvlTree<T>  {
         return newRoot;
     }
 
-    public delete(t: T): void {
-        this.deleteChild(t, this);
+    public delete(t: T): AvlNode<T> {
+        return this.deleteChild(t, this);
     }
 
     public minValue(): T {
-        if ( this.value === null ) {
+        if (this.value === null) {
             return null;
-        } 
+        }
         if (this.left.value === null) {
             return this.value;
         }
@@ -156,9 +160,9 @@ class AvlNode<T> implements IAvlTree<T>  {
     }
 
     public maxValue(): T {
-        if ( this.value === null ) {
+        if (this.value === null) {
             return null;
-        } 
+        }
 
         if (this.right.value === null) {
             return this.value;
@@ -167,37 +171,60 @@ class AvlNode<T> implements IAvlTree<T>  {
     }
 
 
-    private deleteChild(t: T, parent: AvlNode<T>): void {
+    private deleteChild(t: T, parent: AvlNode<T>): AvlNode<T> {
         if (this.value === null) {
-            return;
+            return this;
         }
 
         if (t < this.value) {
             if (this.left === null) {
-                return;
+                return this;
             }
-            this.left.deleteChild(t, this);
+            this.left = this.left.deleteChild(t, this);
+            this.height = this.getMaxChildHeight() + 1;
         } else if (t > this.value) {
             if (this.right === null) {
-                return;
+                return this;
             }
-            this.right.deleteChild(t, this);
-        } else {
-            if (this.left !== null && this.right !== null) {
-                this.value = this.right.minValue();
-                this.right.deleteChild(this.value, this);
-            } else if (parent.left === this) {
-                parent.left = (this.left !== null) ? this.left : this.right;
-            } else if (parent.right === this) {
-                parent.right = (this.left !== null) ? this.left : this.right;
-            }
-        }
-        if ( this.value === null ) {
-            this.height = 0;
-        } else {
+            this.right = this.right.deleteChild(t, this);
             this.height = this.getMaxChildHeight() + 1;
-            parent.height = parent.getMaxChildHeight() + 1;
+        } else {
+            if (this.left.isLeaf() && this.right.isLeaf()) {
+                return new AvlNode<T>();
+            } else {
+                if (!this.left.isLeaf() && !this.right.isLeaf()) {
+                    this.value = this.right.minValue();
+                    this.right = this.right.deleteChild(this.value, this);
+                    this.height = this.getMaxChildHeight() + 1;
+                } else if (!this.left.isLeaf()) {
+                    return this.left;
+                } else if (!this.right.isLeaf()) {
+                    return this.right;
+                }
+            }
         }
+
+        let result: AvlNode<T> = this;
+
+        let balance = this.getBalance();
+        if (balance > 1) {
+            let childBalance = this.left.getBalance();
+            if (childBalance < 0) {
+                result = this.rotateLR();
+            } else {
+                result = this.rotateLL();
+            }
+        } else if (balance < -1) {
+            let childBalance = this.right.getBalance();
+            if (childBalance > 0) {
+                result = this.rotateRL();
+            } else {
+                result = this.rotateRR();
+            }
+        }
+
+        result.height = result.getMaxChildHeight() + 1;
+        return result;
     }
 
     public preceding(): T {
@@ -216,12 +243,23 @@ class AvlNode<T> implements IAvlTree<T>  {
         return p.value;
     }
 
+    private isLeaf(): boolean {
+        return this.getMaxChildHeight() === 0;
+    }
+
     public getMaxChildHeight(): number {
 
         let hl = this.left ? this.left.height : 0;
         let hr = this.right ? this.right.height : 0;
 
         return Math.max(hl, hr);
+    }
+
+    public getBalance(): number {
+        let hl = this.left ? this.left.height : 0;
+        let hr = this.right ? this.right.height : 0;
+
+        return hl - hr;
     }
 
     public rotateLL(): AvlNode<T> {

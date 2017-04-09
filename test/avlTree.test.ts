@@ -125,19 +125,46 @@ describe('Binary Search Tree operations', () => {
         assertTreeEqual(avlTree, heights, values);
     });
 
-    // it.only('should call rotateRR when deleting node', () => {
-    //     let avlTree = new AvlTree<number>();
-    //     [3, 1, 5, 6].forEach(e => avlTree.insert(e));
-    //     let heights = [3, 1, 2, 0, 0, 0, 1];
-    //     let values = [3, 1, 5, null, null, null, 6];
-    //     assertTreeEqual(avlTree, heights, values);
+    it('should call rotateRR when deleting node', () => {
+        let avlTree = new AvlTree<number>();
+        [3, 1, 5, 6].forEach(e => avlTree.insert(e));
+        let heights = [3, 1, 2, 0, 0, 0, 1];
+        let values = [3, 1, 5, null, null, null, 6];
+        assertTreeEqual(avlTree, heights, values);
 
-    //     avlTree.delete(1);
-    //     heights = [2, 1, 1];
-    //     values = [5, 3, 6];
-    //     assertTreeEqual(avlTree, heights, values);
+        avlTree.delete(1);
+        heights = [2, 1, 1];
+        values = [5, 3, 6];
+        assertTreeEqual(avlTree, heights, values);
+    });
 
-    // });
+    it('should call rotateLL when deleting node', () => {
+        let avlTree = new AvlTree<number>();
+        [6,5,7,4].forEach(e => avlTree.insert(e));
+        let heights = [3, 2, 1, 1, 0, 0, 0];
+        let values = [6, 5, 7, 4, null, null, null];
+        assertTreeEqual(avlTree, heights, values);
+
+        avlTree.delete(7);
+        heights = [2, 1, 1];
+        values = [5, 4, 6];
+        assertTreeEqual(avlTree, heights, values);
+    });
+
+
+    it('should call rotateRL when deleting node', () => {
+        let avlTree = new AvlTree<number>();
+        [3, 1, 5, 4].forEach(e => avlTree.insert(e));
+        let heights = [3, 1, 2, 0, 0, 1, 0];
+        let values = [3, 1, 5, null, null, 4, null];
+        assertTreeEqual(avlTree, heights, values);
+
+        avlTree.delete(1);
+        heights = [2, 1, 1];
+        values = [4, 3, 5];
+        assertTreeEqual(avlTree, heights, values);
+    });
+
 
     it('should delete the single element', () => {
         let avlTree = new AvlTree<number>();
@@ -173,11 +200,21 @@ describe('Binary Search Tree operations', () => {
 
     const CNT: number = 100000;
     let v: Array<number> ;
+    let d: Array<number> ;
     function initArray() {
         v = new Array<number>(CNT);
+        d = new Array<number>(CNT);
+        for ( let i: number = 0 ; i < CNT; ++i ) {
+            d[i] = i;
+        }
         for ( let i: number = 0 ; i < CNT; ++i  ) {
-            let n = Math.round(Math.random()*10000000);
+            let n = Math.round(Math.random()*CNT);
             v[i] = n; 
+
+            let r = Math.round( Math.random() * ( CNT-i ));
+            let tmp = d[i];
+            d[i] = d[r];
+            d[i] = tmp;
         }
         console.log('expected min:' + v.reduce( (prev: number, curr: number) => prev > curr ? curr: prev));
         console.log('expected max:' + v.reduce( (prev: number, curr: number) => prev < curr ? curr: prev));
@@ -185,7 +222,7 @@ describe('Binary Search Tree operations', () => {
 
     before( initArray);
 
-    it('should insert 100000 fast', () => {
+    it('should insert and delete 100000 fast', () => {
         let avlTree = new AvlTree<number>();
         
         for ( let i = 0 ; i < CNT ; ++i ) {
@@ -194,6 +231,23 @@ describe('Binary Search Tree operations', () => {
         console.log('avlTree height: ' + avlTree.height );
         console.log('min:' + avlTree.minValue());
         console.log('max:' + avlTree.maxValue() );
+
+        let prevHeight = null;
+        let counter = 0;
+        for ( let i = 0 ; i < CNT ; ++i ) {
+            avlTree.delete(d[i]);
+            if ( avlTree.height !== prevHeight) {
+                console.log('avlTree height: ' + avlTree.height + ': ' + counter );
+                counter = 0;
+                prevHeight = avlTree.height;
+            }
+            ++counter;
+        }
+
+        console.log('avlTree height: ' + avlTree.height );
+        console.log('min:' + avlTree.minValue());
+        console.log('max:' + avlTree.maxValue() );
+        
     });
 
     function log2(x: any) {
