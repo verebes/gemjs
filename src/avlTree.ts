@@ -1,6 +1,11 @@
-export interface IAvlTree<T> {
-    right: IAvlTree<T>;
-    left: IAvlTree<T>;
+export interface IComparator<T> {
+    isEqual( t1: T, t2: T): boolean;
+    lessThan( t1: T, t2: T): boolean;
+}
+
+export interface IAvlTree<T, C extends IComparator<T>> {
+    right: IAvlTree<T, C>;
+    left: IAvlTree<T, C>;
 
     height: number;
     value: T;
@@ -13,11 +18,20 @@ export interface IAvlTree<T> {
     succeeding(): T;
 }
 
-export class AvlTree<T> implements IAvlTree<T> {
-    get right(): IAvlTree<T> {
+export class Comparator<T> implements IComparator<T> {
+    public isEqual(t1: T, t2: T): boolean {
+        return t1 === t2;
+    }
+    public lessThan(t1: T, t2: T): boolean {
+        return t1 < t2;
+    }
+}
+
+export class AvlTree<T, C extends IComparator<T>> implements IAvlTree<T, C> {
+    get right(): IAvlTree<T, C> {
         return this.root.right;
     }
-    get left(): IAvlTree<T> {
+    get left(): IAvlTree<T, C> {
         return this.root.left;
     }
 
@@ -29,10 +43,10 @@ export class AvlTree<T> implements IAvlTree<T> {
         return this.root.value;
     }
 
-    constructor() {
-        this.root = new AvlNode<T>();
-        this.root.left = new AvlNode<T>();
-        this.root.right = new AvlNode<T>();
+    constructor( private readonly comparator: IComparator<T> ) {
+        this.root = new AvlNode<T, C>(comparator);
+        this.root.left = new AvlNode<T, C>(comparator);
+        this.root.right = new AvlNode<T, C>(comparator);
     }
 
     has(t: T): boolean {
@@ -46,13 +60,13 @@ export class AvlTree<T> implements IAvlTree<T> {
             return;
         }
 
-        if (this.root.value === t) {
+        if ( this.comparator.isEqual( this.root.value, t)) {
             if (this.root.right) {
                 this.root = this.root.right;
             } else if (this.root.left) {
                 this.root = this.root.left;
             } else {
-                this.root = new AvlNode<T>();
+                this.root = new AvlNode<T, C>( this.comparator);
             }
             return;
         }
@@ -72,17 +86,17 @@ export class AvlTree<T> implements IAvlTree<T> {
         return this.root.succeeding();
     }
 
-    private root = new AvlNode<T>();
+    private root = new AvlNode<T, C>(this.comparator);
 }
 
-class AvlNode<T> implements IAvlTree<T>  {
+class AvlNode<T, C extends IComparator<T>> implements IAvlTree<T, C>  {
 
     public value: T;
     public height: number;
-    public left: AvlNode<T>;
-    public right: AvlNode<T>;
+    public left: AvlNode<T, C>;
+    public right: AvlNode<T, C>;
 
-    constructor() {
+    constructor( private readonly comparator: IComparator<T>) {
         this.value = null;
         this.height = 0;
         this.left = null;
@@ -94,30 +108,30 @@ class AvlNode<T> implements IAvlTree<T>  {
             return false;
         }
 
-        if (this.value === t) {
+        if ( this.comparator.isEqual( this.value, t)) {
             return true;
         }
 
-        if (t < this.value) {
-            return this.left.has(t);
-        } else {
+        if ( this.comparator.lessThan( this.value, t)) {
             return this.right.has(t);
+        } else {
+            return this.left.has(t);
         }
     }
 
-    public insert(t: T): AvlNode<T> {
+    public insert(t: T): AvlNode<T, C> {
         if (this.value === null) {
             this.value = t;
             this.height = 1;
-            this.left = new AvlNode<T>();
-            this.right = new AvlNode<T>();
+            this.left = new AvlNode<T, C>( this.comparator);
+            this.right = new AvlNode<T, C>( this.comparator);
             return this;
         }
 
-        if (t < this.value) {
-            this.left = this.left.insert(t);
-        } else {
+        if (this.comparator.lessThan(this.value, t)) {
             this.right = this.right.insert(t);
+        } else {
+            this.left = this.left.insert(t);
         }
 
         this.height = this.getMaxChildHeight() + 1;
@@ -126,26 +140,26 @@ class AvlNode<T> implements IAvlTree<T>  {
     }
 
     private rebalance(t: T) {
-        let newRoot: AvlNode<T> = this;
+        let newRoot: AvlNode<T, C> = this;
         let balance: number = this.left.height - this.right.height;
 
         if (balance < -1) {
-            if (t > this.right.value) {
+            if (this.comparator.lessThan(this.right.value ,t)) {
                 newRoot = this.rotateRR();
             } else {
                 newRoot = this.rotateRL();
             }
         } else if (balance > 1) {
-            if (t < this.left.value) {
-                newRoot = this.rotateLL();
-            } else {
+            if ( this.comparator.lessThan( this.left.value, t)) {
                 newRoot = this.rotateLR();
+            } else {
+                newRoot = this.rotateLL();
             }
         }
         return newRoot;
     }
 
-    public delete(t: T): AvlNode<T> {
+    public delete(t: T): AvlNode<T, C> {
         return this.deleteChild(t, this);
     }
 
@@ -171,18 +185,18 @@ class AvlNode<T> implements IAvlTree<T>  {
     }
 
 
-    private deleteChild(t: T, parent: AvlNode<T>): AvlNode<T> {
+    private deleteChild(t: T, parent: AvlNode<T, C>): AvlNode<T, C> {
         if (this.value === null) {
             return this;
         }
 
-        if (t < this.value) {
+        if ( this.comparator.lessThan(t, this.value)) {
             if (this.left === null) {
                 return this;
             }
             this.left = this.left.deleteChild(t, this);
             this.height = this.getMaxChildHeight() + 1;
-        } else if (t > this.value) {
+        } else if ( this.comparator.lessThan(this.value, t)) {
             if (this.right === null) {
                 return this;
             }
@@ -190,7 +204,7 @@ class AvlNode<T> implements IAvlTree<T>  {
             this.height = this.getMaxChildHeight() + 1;
         } else {
             if (this.left.isLeaf() && this.right.isLeaf()) {
-                return new AvlNode<T>();
+                return new AvlNode<T, C>( this.comparator);
             } else {
                 if (!this.left.isLeaf() && !this.right.isLeaf()) {
                     this.value = this.right.minValue();
@@ -204,7 +218,7 @@ class AvlNode<T> implements IAvlTree<T>  {
             }
         }
 
-        let result: AvlNode<T> = this;
+        let result: AvlNode<T, C> = this;
 
         let balance = this.getBalance();
         if (balance > 1) {
@@ -228,7 +242,7 @@ class AvlNode<T> implements IAvlTree<T>  {
     }
 
     public preceding(): T {
-        let p: AvlNode<T> = this;
+        let p: AvlNode<T, C> = this;
         while (p.left !== null) {
             p = p.left;
         }
@@ -236,7 +250,7 @@ class AvlNode<T> implements IAvlTree<T>  {
     }
 
     public succeeding(): T {
-        let p: AvlNode<T> = this;
+        let p: AvlNode<T, C> = this;
         while (p.right !== null) {
             p = p.right;
         }
@@ -262,7 +276,7 @@ class AvlNode<T> implements IAvlTree<T>  {
         return hl - hr;
     }
 
-    public rotateLL(): AvlNode<T> {
+    public rotateLL(): AvlNode<T, C> {
         let tmp = this.left;
         this.left = tmp.right;
         tmp.right = this;
@@ -272,7 +286,7 @@ class AvlNode<T> implements IAvlTree<T>  {
         return tmp;
     }
 
-    public rotateRR(): AvlNode<T> {
+    public rotateRR(): AvlNode<T, C> {
         let tmp = this.right;
         this.right = tmp.left;
         tmp.left = this;
@@ -282,13 +296,19 @@ class AvlNode<T> implements IAvlTree<T>  {
         return tmp;
     }
 
-    public rotateLR(): AvlNode<T> {
+    public rotateLR(): AvlNode<T, C> {
         this.left = this.left.rotateRR();
         return this.rotateLL();
     }
 
-    public rotateRL(): AvlNode<T> {
+    public rotateRL(): AvlNode<T, C> {
         this.right = this.right.rotateLL();
         return this.rotateRR();
     }
 }   
+
+export class NumericAvlTree extends AvlTree<number,  Comparator<number>> {
+    constructor() {
+        super( new Comparator<number>());
+    }
+}

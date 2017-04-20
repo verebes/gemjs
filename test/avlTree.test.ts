@@ -1,26 +1,26 @@
 import { assert } from 'chai';
 import * as chai from 'chai';
 
-import { AvlTree, IAvlTree } from '../src/avlTree';
+import { AvlTree, IAvlTree, NumericAvlTree, IComparator } from '../src/avlTree';
 
 describe('Binary Search Tree operations', () => {
     it('should create an empty AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
     });
 
     it('should return 0 as the height of an empty AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         assert.equal(avlTree.height, 0);
     });
 
     it('should insert one element into the AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         avlTree.insert(1);
         assert.equal(avlTree.height, 1);
     });
 
     it('should insert smaller elements into the left child of the AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [3, 2, 1].forEach(e => avlTree.insert(e));
 
         let values = [2, 1, 3, null, null, null, null];
@@ -29,7 +29,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should insert larger elements into the right child of the AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [1, 2, 3].forEach(e => avlTree.insert(e));
 
         let values = [2, 1, 3, null, null, null, null];
@@ -39,7 +39,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('BST property should be kept when inserting a value ', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [2, 3, 1].forEach(e => avlTree.insert(e));
 
         let values = [2, 1, 3, null, null, null, null];
@@ -48,7 +48,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should delete an element from the tree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [3, 5, 1, 4].forEach(e => avlTree.insert(e));
 
         let values = [3, 1, 5, null, null, 4, null];
@@ -67,7 +67,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should keep the tree balanced LL case', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [3, 2, 1].forEach(e => avlTree.insert(e));
 
         let values = [2, 1, 3];
@@ -79,7 +79,7 @@ describe('Binary Search Tree operations', () => {
 
 
     it('should insert call rotateLR when inserting element into an AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [3, 6, 1, 4, 5].forEach(e => avlTree.insert(e));
 
         let heights = [3, 1, 2, 0, 0, 1, 1];
@@ -88,7 +88,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should insert call rotateRR when inserting element into an AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [13, 16, 9, 10, 11].forEach(e => avlTree.insert(e));
 
         let heights = [3, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, null, null, null, null];
@@ -98,7 +98,7 @@ describe('Binary Search Tree operations', () => {
 
 
     it('should insert call rotateRL when inserting element into an AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [13, 16, 9, 11, 10].forEach(e => avlTree.insert(e));
 
         let heights = [3, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, null, null, null, null];
@@ -108,7 +108,7 @@ describe('Binary Search Tree operations', () => {
 
 
     it('should insert call rotateLL when inserting element into an AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [13, 16, 11, 10, 9].forEach(e => avlTree.insert(e));
 
         let heights = [3, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, null, null, null, null];
@@ -117,7 +117,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should insert call rotateLR when inserting element into an AvlTree', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [13, 16, 11, 9, 10].forEach(e => avlTree.insert(e));
 
         let heights = [3, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, null, null, null, null];
@@ -126,7 +126,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should call rotateRR when deleting node', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [3, 1, 5, 6].forEach(e => avlTree.insert(e));
         let heights = [3, 1, 2, 0, 0, 0, 1];
         let values = [3, 1, 5, null, null, null, 6];
@@ -139,7 +139,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should call rotateLL when deleting node', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [6,5,7,4].forEach(e => avlTree.insert(e));
         let heights = [3, 2, 1, 1, 0, 0, 0];
         let values = [6, 5, 7, 4, null, null, null];
@@ -153,7 +153,7 @@ describe('Binary Search Tree operations', () => {
 
 
     it('should call rotateRL when deleting node', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         [3, 1, 5, 4].forEach(e => avlTree.insert(e));
         let heights = [3, 1, 2, 0, 0, 1, 0];
         let values = [3, 1, 5, null, null, 4, null];
@@ -167,14 +167,14 @@ describe('Binary Search Tree operations', () => {
 
 
     it('should delete the single element', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         avlTree.insert(1);
         avlTree.delete(1);
         assertTreeEqual( avlTree, [0], [null] );
     });
 
     it('should delete the single element', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         avlTree.insert(1);
         avlTree.insert(2);
         avlTree.delete(1);
@@ -182,7 +182,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should delete the single element', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         avlTree.insert(1);
         avlTree.insert(2);
         avlTree.delete(2);
@@ -190,7 +190,7 @@ describe('Binary Search Tree operations', () => {
     });
 
     it('should delete the single element', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         avlTree.insert(2);
         avlTree.insert(1);
         avlTree.delete(1);
@@ -223,7 +223,7 @@ describe('Binary Search Tree operations', () => {
     before( initArray);
 
     it('should insert and delete 100000 fast', () => {
-        let avlTree = new AvlTree<number>();
+        let avlTree = new NumericAvlTree();
         
         for ( let i = 0 ; i < CNT ; ++i ) {
             avlTree.insert(v[i]);
@@ -250,11 +250,44 @@ describe('Binary Search Tree operations', () => {
         
     });
 
+    it.skip('should be possible to store points in the avlTree', () => {
+
+        class P {
+            constructor( public x: number, public y: number ){};
+        }
+
+        class PC implements IComparator<P> {
+            isEqual(t1: P, t2: P): boolean {
+                return t1.x === t2.y &&  t1.y == t2.x;
+            }
+            lessThan(t1: P, t2: P): boolean {
+                return t1.x < t2.x || ( t1.x === t2.x &&  t1.y < t2.y );
+            }
+        }
+
+        let pc = new PC();
+        let avlTree = new AvlTree<P, PC>(pc);
+        [new P(1,6), new P(1,5), new P(1,7), new P(1,4), new P(2,1)].forEach(e => avlTree.insert(e));
+        let heights = [3, 2, 2, 1, 0, 0, 1];
+        let values = [ new P(1,6), new P(1,5), new P(1,7), new P(1,4), null, null, new P(2,1)];
+        assertTreeEqual(avlTree, heights, values);
+
+        avlTree.delete(new P(1,7));
+        heights = [3, 2, 1, 1, 0, 0, 0];
+        values = [ new P(1,6), new P(1,5), new P (2,1), new P(1,4), null, null, null];
+        assertTreeEqual(avlTree, heights, values);
+
+        avlTree.delete(new P(2,1));
+        heights = [2, 1, 1];
+        values = [ new P(1,5), new P(1,4), new P (1,6)];
+        assertTreeEqual(avlTree, heights, values);
+    });
+
     function log2(x: any) {
         return Math.round(Math.log(x) * Math.LOG2E);
     };
 
-    function assertTreeEqual(avlTree: IAvlTree<number>, heights: Array<number>, values: Array<number>) {
+    function assertTreeEqual<T>(avlTree: IAvlTree<T, IComparator<T>>, heights: Array<number>, values: Array<T>) {
         let treeHeight = log2(values.length + 1) - 1
         let p = getTreePathList([], treeHeight);
         let v: any[] = [];
@@ -288,8 +321,8 @@ describe('Binary Search Tree operations', () => {
         return a;
     }
 
-    function getNode(avlTree: IAvlTree<number>, s: string): IAvlTree<number> {
-        let t: IAvlTree<number> = null;
+    function getNode<T>(avlTree: IAvlTree<T, IComparator<T>>, s: string): IAvlTree<T, IComparator<T>> {
+        let t: IAvlTree<T, IComparator<T>> = null;
         for (let i = 0; i < s.length; ++i) {
             if (s[i] == '0') {
                 t = avlTree;
